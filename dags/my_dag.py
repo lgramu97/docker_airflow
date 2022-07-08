@@ -37,20 +37,15 @@ with DAG("my_dag",start_date=datetime(2022,7,7),
          schedule_interval="@daily",catchup=False,) as dag:
     
     #Define Models
-    traning_model_A = PythonOperator(
-        task_id = "training_model_A",
-        python_callable=_training_model        
-    )
-    
-    traning_model_B = PythonOperator(
-        task_id = "training_model_B",
-        python_callable=_training_model        
-    )
-
-    traning_model_C = PythonOperator(
-        task_id = "training_model_C",
-        python_callable=_training_model        
-    )
+    training_model_tasks = [
+        PythonOperator(
+            task_id=f"training_model_{model_id}",
+            python_callable=_training_model,
+            op_kwargs={
+                "model": model_id
+            }
+        ) for model_id in ['A', 'B', 'C']
+    ]
     
     #Define Branch
     choose_best_model = BranchPythonOperator(

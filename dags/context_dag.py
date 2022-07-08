@@ -5,7 +5,7 @@ from airflow.models import DAG
 from airflow.operators.python_operator import PythonOperator, BranchPythonOperator
 from airflow.operators.bash import BashOperator
 
-from random import sample
+from random import choice
 
 
 def _push_task():
@@ -13,7 +13,9 @@ def _push_task():
     return array
 
 def _pull_task(ti):
-    element = sample(ti.xcom_pull(task_ids='push_task'),1)
+    ls = ti.xcom_pull(task_ids='push_task')
+    print(ls)
+    element = choice(ls)
     return element
 
 def _choose_one(**context):
@@ -21,9 +23,9 @@ def _choose_one(**context):
     bash_msj = ti.xcom_pull(task_ids=[
         'pull_task',
     ])
-    if bash_msj == 'echo a':
+    if bash_msj[0] == 'echo a':
         return 'print_a'
-    elif bash_msj == 'echo b':
+    elif bash_msj[0] == 'echo b':
         return 'print_b'
     return 'print_c'
     

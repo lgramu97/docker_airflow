@@ -66,5 +66,5 @@ with DAG("my_dag",start_date=datetime(2022,7,7),
     )
     
     #Same level models. Then choose best model. Finally choose action (same level)
-    [traning_model_A,traning_model_B,traning_model_C] >> choose_best_model >> [inaccurate, accurate]
+    training_model_tasks >> choose_best_model >> [inaccurate, accurate]
 
